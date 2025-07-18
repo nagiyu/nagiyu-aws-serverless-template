@@ -53,8 +53,8 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config user.name "openhands"
-          git config user.email "openhands@all-hands.dev"
+          git config user.name "${{ env.GITHUB_USERNAME }}"
+          git config user.email "${{ env.GITHUB_EMAIL }}"
 
       - name: Create branch
         run: |
