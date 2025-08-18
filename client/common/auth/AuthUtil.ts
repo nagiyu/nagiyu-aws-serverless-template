@@ -28,8 +28,8 @@ export default class AuthUtil {
     };
   }
 
-  public static async getGoogleUserIdFromSession(): Promise<string> {
-    const session = await this.getServerSession();
+  private static async getGoogleUserIdFromSession(): Promise<string> {
+    const session = await AuthUtil.getServerSession();
 
     const accessToken = session?.tokens?.find(t => t.provider === 'google')?.accessToken;
     if (!accessToken) return '';
