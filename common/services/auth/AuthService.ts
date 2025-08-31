@@ -33,7 +33,6 @@ export default class AuthService<DataType extends AuthDataType, RecordType exten
     return {
       ID: data.id,
       DataType: 'Auth',
-      Name: data.name,
       GoogleUserID: data.googleUserId,
       Create: data.create,
       Update: data.update,
@@ -43,7 +42,6 @@ export default class AuthService<DataType extends AuthDataType, RecordType exten
   protected static recordToDataBase(record: AuthRecordType): AuthDataType {
     return {
       id: record.ID,
-      name: record.Name,
       googleUserId: record.GoogleUserID,
       create: record.Create,
       update: record.Update,
