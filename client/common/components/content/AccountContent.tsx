@@ -3,37 +3,35 @@
 import React, { useEffect, useState } from 'react';
 
 import AccountSettingDialog from '@client-common/components/feedback/dialog/AccountSettingDialog';
-import AccountFetchService from '@client-common/services/auth/AccountFetchService.client';
+import AuthFetchService from '@client-common/services/auth/AuthFetchService.client';
 import UserIconAvatar from '@client-common/components/data/avatar/UserIconAvatar';
 
 interface AccountContentProps {
+    enableAuthentication?: boolean;
     isAuthenticated?: boolean;
 }
 
 export default function AccountContent({
+    enableAuthentication = false,
     isAuthenticated = false,
 }: AccountContentProps) {
     const [accountSettingDialogOpen, setAccountSettingDialogOpen] = useState(false);
 
-    const accountFetchService = new AccountFetchService();
+    const authFetchService = new AuthFetchService();
 
     useEffect(() => {
         (async () => {
-            if (!isAuthenticated) {
+            if (!enableAuthentication || !isAuthenticated) {
                 return;
             }
 
             try {
-                // Check if user has account data - only open dialog for new users
-                const accounts = await accountFetchService.get();
+                const user = await authFetchService.getUserByGoogle();
 
-                if (accounts.length === 0) {
-                    // New user - automatically open dialog for account setup
+                if (!user) {
                     setAccountSettingDialogOpen(true);
                 }
-                // Existing users: dialog remains closed
             } catch {
-                // If there's an error checking account data, assume new user
                 setAccountSettingDialogOpen(true);
             }
         })();
@@ -41,7 +39,7 @@ export default function AccountContent({
 
     return (
         <>
-            {isAuthenticated && <UserIconAvatar onClick={() => setAccountSettingDialogOpen(true)} />}
+            <UserIconAvatar onClick={() => setAccountSettingDialogOpen(true)} />
             <AccountSettingDialog
                 open={accountSettingDialogOpen}
                 onClose={() => setAccountSettingDialogOpen(false)}
