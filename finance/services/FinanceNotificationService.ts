@@ -139,7 +139,14 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
               }
             };
 
-            await this.notificationService.sendPushNotification(endpoint, conditionResult.message || '', subscription);
+            // Include exchange and ticker data in the message
+            const messageWithData = JSON.stringify({
+              message: conditionResult.message || '',
+              exchangeId: notification.exchangeId,
+              tickerId: notification.tickerId
+            });
+
+            await this.notificationService.sendPushNotification(endpoint, messageWithData, subscription);
           }
         }
 

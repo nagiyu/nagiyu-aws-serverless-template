@@ -9,6 +9,10 @@ export interface NotificationPayloadType {
   title: string;
   body: string;
   icon?: string;
+  data?: {
+    exchangeId?: string;
+    tickerId?: string;
+  };
 }
 
 export default class NotificationUtil {
