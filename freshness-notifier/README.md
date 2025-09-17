@@ -92,20 +92,27 @@ npm test
 
 Tests are located in the `tests/` directory and follow the naming convention `*.test.ts`.
 
-#### Example Tests
+#### Business Logic Tests
 
-The `FreshnessNotifierExample` class is thoroughly tested with:
-- Unit tests for all CRUD operations
-- Mock verification for service interactions
-- Data validation and type checking
-- Edge case handling (null returns, default values)
+The business logic patterns are thoroughly tested with:
+- Data creation patterns and default value validation
+- Update timestamp behavior verification  
+- ID generation uniqueness and format validation
+- Data type compliance and interface contract verification
+
+#### Interface Tests
+
+The data type interfaces are thoroughly tested with:
+- Type validation and structure verification
+- Property type checking
+- Data integrity validation
 
 ```typescript
 // Example test structure
-describe('FreshnessNotifierExample', () => {
-  describe('createFreshnessItem', () => {
-    it('should create a freshness item with correct data structure', async () => {
-      // Test implementation
+describe('Business Logic Validation', () => {
+  describe('Data Creation Patterns', () => {
+    it('should create freshness items with proper structure and defaults', () => {
+      // Test implementation verifying data creation logic
     });
   });
 });
