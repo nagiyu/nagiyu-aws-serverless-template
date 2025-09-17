@@ -6,6 +6,7 @@ import GreaterThanCondition, { GreaterThanConditionInfo } from '@finance/conditi
 import LessThanCondition, { LessThanConditionInfo } from '@finance/conditions/LessThanCondition';
 import SansenAkenomyojoCondition, { SansenAkenomyojoConditionInfo } from '@finance/conditions/SansenAkenomyojoCondition';
 import TickerService from '@finance/services/TickerService';
+import FrequencyUtil from '@finance/utils/FrequencyUtil';
 import { ExchangeSessionType } from '@finance/types/ExchangeTypes';
 import { FinanceNotificationFrequencyType } from '@finance/types/FinanceNotificationType';
 
@@ -149,7 +150,6 @@ export default class ConditionService {
     let message = `${ticker.name} shows ${conditionName} pattern - signal detected`;
     
     if (frequency) {
-      const FrequencyUtil = (await import('@finance/utils/FrequencyUtil')).default;
       const frequencyText = FrequencyUtil.formatFrequency(frequency);
       message += ` (通知頻度: ${frequencyText})`;
     }
