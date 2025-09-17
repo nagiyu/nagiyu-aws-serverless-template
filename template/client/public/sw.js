@@ -18,20 +18,10 @@ self.addEventListener('push', function (event) {
 // 表示された通知がクリックされたときの処理
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  
-  // Parse the notification data to get exchange and ticker information
-  const notificationData = event.notification.data;
-  let url = self.location.origin || 'http://localhost:3000';
-  
-  // If we have exchange and ticker data, add them as URL parameters
-  if (notificationData && notificationData.exchangeId && notificationData.tickerId) {
-    const params = new URLSearchParams();
-    params.set('exchangeId', notificationData.exchangeId);
-    params.set('tickerId', notificationData.tickerId);
-    url += '/?' + params.toString();
-  }
-  
   event.waitUntil(
-    clients.openWindow(url)
+    clients.openWindow('http://localhost:3000')
+
+    // TODO: これでいけるかも？
+    // clients.openWindow(self.location.origin || "http://localhost:3000")
   );
 });
