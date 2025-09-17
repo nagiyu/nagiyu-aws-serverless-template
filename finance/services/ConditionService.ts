@@ -7,6 +7,7 @@ import LessThanCondition, { LessThanConditionInfo } from '@finance/conditions/Le
 import SansenAkenomyojoCondition, { SansenAkenomyojoConditionInfo } from '@finance/conditions/SansenAkenomyojoCondition';
 import TickerService from '@finance/services/TickerService';
 import { ExchangeSessionType } from '@finance/types/ExchangeTypes';
+import { FinanceNotificationFrequencyType } from '@finance/types/FinanceNotificationType';
 
 type ConditionConstructor = new (exchangeService: ExchangeService, tickerService: TickerService) => ConditionBase;
 
@@ -116,6 +117,7 @@ export default class ConditionService {
    * @param tickerId Ticker ID
    * @param session Exchange session type
    * @param targetPrice Target price (optional)
+   * @param frequency Notification frequency (optional)
    * @returns Promise that resolves to true if the condition is met, false otherwise
    */
   public async checkCondition(
@@ -123,7 +125,8 @@ export default class ConditionService {
     exchangeId: string,
     tickerId: string,
     session?: ExchangeSessionType,
-    targetPrice?: number | null
+    targetPrice?: number | null,
+    frequency?: FinanceNotificationFrequencyType
   ): Promise<ConditionResult> {
     const ConditionClass = this.getCondition(conditionName);
     const condition = new ConditionClass(this.exchangeService, this.tickerService);
@@ -133,16 +136,24 @@ export default class ConditionService {
       return { met };
     }
 
-    const message = await this.getNotificationMessage(this.getConditionInfo(conditionName).name, tickerId);
+    const message = await this.getNotificationMessage(this.getConditionInfo(conditionName).name, tickerId, frequency);
     return { met, message };
   }
 
-  private async getNotificationMessage(conditionName: string, tickerId: string): Promise<string> {
+  private async getNotificationMessage(conditionName: string, tickerId: string, frequency?: FinanceNotificationFrequencyType): Promise<string> {
     const ticker = await this.tickerService.getById(tickerId);
     if (!ticker) {
       ErrorUtil.throwError(`Ticker with ID ${tickerId} not found`);
     }
 
-    return `${ticker.name} shows ${conditionName} pattern - signal detected`;
+    let message = `${ticker.name} shows ${conditionName} pattern - signal detected`;
+    
+    if (frequency) {
+      const FrequencyUtil = (await import('@finance/utils/FrequencyUtil')).default;
+      const frequencyText = FrequencyUtil.formatFrequency(frequency);
+      message += ` (通知頻度: ${frequencyText})`;
+    }
+
+    return message;
   }
 }
