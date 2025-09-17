@@ -78,6 +78,47 @@ const setting = await service.getSettingByTerminalId('terminal-123');
 const settings = await service.getSettings();
 ```
 
+## Testing
+
+The module includes comprehensive Jest-based unit tests to ensure quality and reliability.
+
+### Running Tests
+
+```bash
+npm test
+```
+
+### Test Structure
+
+Tests are located in the `tests/` directory and follow the naming convention `*.test.ts`.
+
+#### Example Tests
+
+The `FreshnessNotifierExample` class is thoroughly tested with:
+- Unit tests for all CRUD operations
+- Mock verification for service interactions
+- Data validation and type checking
+- Edge case handling (null returns, default values)
+
+```typescript
+// Example test structure
+describe('FreshnessNotifierExample', () => {
+  describe('createFreshnessItem', () => {
+    it('should create a freshness item with correct data structure', async () => {
+      // Test implementation
+    });
+  });
+});
+```
+
+### Test Configuration
+
+Jest is configured with:
+- TypeScript support via ts-jest
+- Module path mapping for `@freshness-notifier` and `@common` imports
+- Node.js test environment
+- Automatic mocking of dependencies
+
 ## Database Tables
 
 The services use environment-aware table naming:
