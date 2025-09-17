@@ -1,21 +1,17 @@
-import DynamoDBService from '@common/services/aws/DynamoDBService';
-import { RecordTypeBase } from '@common/interfaces/record/RecordTypeBase';
+import DynamoDBUtil from '@common/aws/DynamoDBUtil';
+import { RecordTypeBase } from '@common/aws/interfaces/DynamoDB/RecordTypeBase';
 
 export default abstract class DataAccessorBase<T extends RecordTypeBase> {
+  private readonly tableName: string;
   private readonly dataType: string;
-  private readonly DynamoDBService: DynamoDBService<T>;
 
-  protected constructor(
-    tableName: string,
-    dataType: string,
-    dynamoDBService: DynamoDBService<T> = new DynamoDBService<T>(tableName)
-  ) {
+  protected constructor(tableName: string, dataType: string) {
+    this.tableName = tableName;
     this.dataType = dataType;
-    this.DynamoDBService = dynamoDBService;
   }
 
   public getTableName(): string {
-    return this.DynamoDBService.getTableName();
+    return this.tableName;
   }
 
   public getDataType(): string {
@@ -23,22 +19,18 @@ export default abstract class DataAccessorBase<T extends RecordTypeBase> {
   }
 
   public async get(): Promise<T[]> {
-    return await this.DynamoDBService.getAllByDataType(this.dataType);
+    return await DynamoDBUtil.getAllByDataType<T>(this.tableName, this.dataType);
   }
 
-  public async getById(id: string): Promise<T | null> {
-    return await this.DynamoDBService.getById(id);
+  public async create(record: T): Promise<void> {
+    await DynamoDBUtil.create<T>(this.tableName, record);
   }
 
-  public async create(creates: Partial<T>): Promise<T> {
-    return await this.DynamoDBService.create({ ...creates, DataType: this.dataType });
-  }
-
-  public async update(id: string, updates: Partial<T>): Promise<T | null> {
-    return await this.DynamoDBService.update(id, this.dataType, updates);
+  public async update(record: T): Promise<void> {
+    await DynamoDBUtil.update<T>(this.tableName, record.ID, this.dataType, record);
   }
 
   public async delete(id: string): Promise<void> {
-    await this.DynamoDBService.delete(id, this.dataType);
+    await DynamoDBUtil.delete(this.tableName, id, this.dataType);
   }
 }
