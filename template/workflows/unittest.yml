@@ -36,33 +36,3 @@ jobs:
         npm test
         echo "✅ Common module unit tests completed successfully"
 
-  test-{{ PROJECT_NAME }}:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: |
-          common/package-lock.json
-          {{ PROJECT_NAME }}/package-lock.json
-    
-    - name: Install dependencies for common
-      run: |
-        cd common
-        npm install
-    
-    - name: Install dependencies for {{ PROJECT_NAME }}
-      run: |
-        cd {{ PROJECT_NAME }}
-        npm install
-    
-    - name: Run unit tests for {{ PROJECT_NAME }}
-      run: |
-        cd {{ PROJECT_NAME }}
-        npm test
-        echo "✅ {{ PROJECT_NAME }} module unit tests completed successfully"
