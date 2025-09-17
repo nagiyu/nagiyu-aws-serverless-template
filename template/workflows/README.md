@@ -11,6 +11,12 @@
 - `{{ PROJECT_NAME }}`: プロジェクト名 (例: `finance`)
 - `{{ DEV_SECRET_NAME }}`: 開発環境のシークレット名 (例: `DevFinance`)
 
+### unittest.yml
+単体テスト（UnitTest）を実行するためのワークフローテンプレートです。
+
+**置換が必要な変数:**
+- `{{ PROJECT_NAME }}`: プロジェクト名 (例: `finance`)
+
 ### update-template.yml
 ソースリポジトリの変更をテンプレートリポジトリに反映するためのワークフローテンプレートです。
 
