@@ -156,7 +156,7 @@ export default function FinanceNotificationConditionEditDialogContent({
             {conditionInfo.enableTargetPrice && (
                 <CurrencyNumberField
                     label='目標価格'
-                    value={item.targetPrice || 0}
+                    value={item.targetPrice !== null ? item.targetPrice : 0}
                     disabled={loading}
                     onChange={(value) => {
                         onItemChange({
