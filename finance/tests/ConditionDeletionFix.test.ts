@@ -33,7 +33,7 @@ describe('FinanceNotificationService - Condition Deletion Fix', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup mock stock price data  
     FinanceUtilMock.StockPriceDataMock = [
       {
@@ -41,7 +41,7 @@ describe('FinanceNotificationService - Condition Deletion Fix', () => {
         data: [1000, 960, 950, 1010]
       }
     ];
-    
+
     service = new FinanceNotificationService(
       dataAccessor,
       exchangeService,
@@ -54,7 +54,7 @@ describe('FinanceNotificationService - Condition Deletion Fix', () => {
     jest.spyOn(service, 'get').mockImplementation(jest.fn());
     superGetByIdSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'getById').mockImplementation(jest.fn());
     superUpdateSpy = jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(service)), 'update').mockImplementation(jest.fn());
-    
+
     // Mock the time-related private methods to ensure conditions are always checked
     jest.spyOn(service as any, 'isWithinExchangeHours').mockReturnValue(true);
     jest.spyOn(service as any, 'isExchangeStartTime').mockReturnValue(true);
