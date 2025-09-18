@@ -42,8 +42,8 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
       ErrorUtil.throwError(`Condition list is required`);
     }
 
-    // Check for duplicate Exchange and Ticker combination
-    await this.validateUniqueExchangeTicker(creates.exchangeId, creates.tickerId);
+    // Check for duplicate Exchange and Ticker combination per terminal
+    await this.validateUniqueExchangeTicker(creates.exchangeId, creates.tickerId, creates.terminalId);
 
     creates.conditionList.forEach(condition => {
       condition.firstNotificationSent = false;
@@ -56,7 +56,7 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
       ErrorUtil.throwError(`Condition list is required`);
     }
 
-    // Check for duplicate Exchange and Ticker combination (excluding current record)
+    // Check for duplicate Exchange and Ticker combination per terminal (excluding current record)
     if (updates.exchangeId || updates.tickerId) {
       // Get current record to get missing exchange/ticker IDs
       const currentRecord = await this.getById(id);
@@ -66,8 +66,9 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
 
       const exchangeId = updates.exchangeId || currentRecord.exchangeId;
       const tickerId = updates.tickerId || currentRecord.tickerId;
+      const terminalId = updates.terminalId || currentRecord.terminalId;
       
-      await this.validateUniqueExchangeTicker(exchangeId, tickerId, id);
+      await this.validateUniqueExchangeTicker(exchangeId, tickerId, terminalId, id);
     }
 
     updates.conditionList.forEach(condition => {
@@ -97,6 +98,12 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
 
         console.log(`Checking condition for ${exchange.key}:${ticker.key}`);
 
+        // Check if conditionList exists and is not empty
+        if (!notification.conditionList || notification.conditionList.length === 0) {
+          console.log(`No conditions defined for notification ${notification.id}, skipping`);
+          continue;
+        }
+
         // Filter conditions that should be checked based on timing
         const conditionsToCheck = notification.conditionList.filter(condition => {
           if (!this.shouldCheckCondition(condition, exchange)) {
@@ -113,7 +120,7 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
         });
 
         // If there are conditions to check, run them in parallel
-        if (conditionsToCheck.length === 0) {
+        if (!conditionsToCheck || conditionsToCheck.length === 0) {
           console.log(`No conditions to check for notification ${notification.id} at this time`);
           continue;
         }
@@ -162,16 +169,16 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
         }
 
         // Only update firstNotificationSent flags if any conditions were processed
-        const needsUpdate = notification.conditionList.some(condition => !condition.firstNotificationSent);
+        const needsUpdate = notification.conditionList && notification.conditionList.some(condition => !condition.firstNotificationSent);
         
         if (needsUpdate) {
           // Get the latest data to ensure we don't overwrite recent changes
           const latestNotification = await super.getById(notification.id);
           
-          if (latestNotification) {
+          if (latestNotification && latestNotification.conditionList) {
             // Update only the firstNotificationSent flags on the latest data
             latestNotification.conditionList.forEach(latestCondition => {
-              const processedCondition = notification.conditionList.find(c => c.id === latestCondition.id);
+              const processedCondition = notification.conditionList?.find(c => c.id === latestCondition.id);
               if (processedCondition && !processedCondition.firstNotificationSent) {
                 latestCondition.firstNotificationSent = true;
               }
@@ -195,20 +202,22 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
   }
 
   /**
-   * Validate that the Exchange and Ticker combination is unique
+   * Validate that the Exchange and Ticker combination is unique per terminal
    * @param exchangeId - Exchange ID to validate
    * @param tickerId - Ticker ID to validate  
+   * @param terminalId - Terminal ID to limit validation scope
    * @param excludeId - ID to exclude from validation (for updates)
    */
-  private async validateUniqueExchangeTicker(exchangeId?: string, tickerId?: string, excludeId?: string): Promise<void> {
-    if (!exchangeId || !tickerId) {
-      return; // Skip validation if either exchangeId or tickerId is missing
+  private async validateUniqueExchangeTicker(exchangeId?: string, tickerId?: string, terminalId?: string, excludeId?: string): Promise<void> {
+    if (!exchangeId || !tickerId || !terminalId) {
+      return; // Skip validation if any required parameter is missing
     }
 
     const existingNotifications = await this.get();
     
     const duplicateNotification = existingNotifications.find(notification => 
       notification.id !== excludeId && 
+      notification.terminalId === terminalId &&
       notification.exchangeId === exchangeId && 
       notification.tickerId === tickerId
     );
