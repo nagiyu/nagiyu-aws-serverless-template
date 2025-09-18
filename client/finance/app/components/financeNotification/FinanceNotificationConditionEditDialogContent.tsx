@@ -34,14 +34,6 @@ export default function FinanceNotificationConditionEditDialogContent({
     isNew,
     loading
 }: FinanceNotificationEditDialogContentProps) {
-    // Debug logging to understand the data flow
-    console.log('FinanceNotificationConditionEditDialogContent rendered with:', {
-        isNew,
-        'item.conditionName': item.conditionName,
-        'item.targetPrice': item.targetPrice,
-        'item (full)': item
-    });
-
     const [conditions, setConditions] = useState<SelectOptionType[]>([]);
     const [conditionInfo, setConditionInfo] = useState<ConditionInfo>({
         name: '',
@@ -86,7 +78,6 @@ export default function FinanceNotificationConditionEditDialogContent({
 
         (async () => {
             const info = await conditionFetchService.getConditionInfo(item.conditionName);
-            console.log('Fetched conditionInfo:', info);
             setConditionInfo(info);
         })();
     }, [item.conditionName]);
@@ -95,14 +86,7 @@ export default function FinanceNotificationConditionEditDialogContent({
         if (!item.conditionName) return;
         if (conditionInfo.name !== item.conditionName) return;
 
-        console.log('conditionInfo effect triggered:', {
-            'conditionInfo.enableTargetPrice': conditionInfo.enableTargetPrice,
-            'item.targetPrice': item.targetPrice,
-            'isNew': isNew
-        });
-
         if (!conditionInfo.enableTargetPrice) {
-            console.log('Setting targetPrice to null because enableTargetPrice is false');
             onItemChange({
                 ...item,
                 targetPrice: null,
@@ -111,13 +95,10 @@ export default function FinanceNotificationConditionEditDialogContent({
             // Only set targetPrice to 1 if it's a new item and targetPrice is null
             // For existing items, preserve the current targetPrice value
             if (isNew && item.targetPrice === null) {
-                console.log('Setting targetPrice to 1 for new item with null targetPrice');
                 onItemChange({
                     ...item,
                     targetPrice: 1,
                 });
-            } else {
-                console.log('Preserving existing targetPrice:', item.targetPrice);
             }
         }
     }, [conditionInfo]);
@@ -176,24 +157,15 @@ export default function FinanceNotificationConditionEditDialogContent({
             {conditionInfo.enableTargetPrice && (
                 <CurrencyNumberField
                     label='目標価格'
-                    value={(() => {
-                        const value = item.targetPrice !== null ? item.targetPrice : 0;
-                        console.log('CurrencyNumberField value:', {
-                            'item.targetPrice': item.targetPrice,
-                            'computed value': value
-                        });
-                        return value;
-                    })()}
+                    value={item.targetPrice !== null ? item.targetPrice : 0}
                     disabled={loading}
                     onChange={(value) => {
-                        console.log('CurrencyNumberField onChange:', value);
                         onItemChange({
                             ...item,
                             targetPrice: Number(value.target.value)
                         })
                     }}
                     onValueChange={(value) => {
-                        console.log('CurrencyNumberField onValueChange:', value);
                         // Ensure the target price is not negative
                         const validValue = Math.max(0, value);
                         onItemChange({
