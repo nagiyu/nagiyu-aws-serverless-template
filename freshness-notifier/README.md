@@ -78,6 +78,54 @@ const setting = await service.getSettingByTerminalId('terminal-123');
 const settings = await service.getSettings();
 ```
 
+## Testing
+
+The module includes comprehensive Jest-based unit tests to ensure quality and reliability.
+
+### Running Tests
+
+```bash
+npm test
+```
+
+### Test Structure
+
+Tests are located in the `tests/` directory and follow the naming convention `*.test.ts`.
+
+#### Business Logic Tests
+
+The business logic patterns are thoroughly tested with:
+- Data creation patterns and default value validation
+- Update timestamp behavior verification  
+- ID generation uniqueness and format validation
+- Data type compliance and interface contract verification
+
+#### Interface Tests
+
+The data type interfaces are thoroughly tested with:
+- Type validation and structure verification
+- Property type checking
+- Data integrity validation
+
+```typescript
+// Example test structure
+describe('Business Logic Validation', () => {
+  describe('Data Creation Patterns', () => {
+    it('should create freshness items with proper structure and defaults', () => {
+      // Test implementation verifying data creation logic
+    });
+  });
+});
+```
+
+### Test Configuration
+
+Jest is configured with:
+- TypeScript support via ts-jest
+- Module path mapping for `@freshness-notifier` and `@common` imports
+- Node.js test environment
+- Automatic mocking of dependencies
+
 ## Database Tables
 
 The services use environment-aware table naming:
