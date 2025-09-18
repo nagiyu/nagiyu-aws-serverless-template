@@ -98,6 +98,12 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
 
         console.log(`Checking condition for ${exchange.key}:${ticker.key}`);
 
+        // Check if conditionList exists and is not empty
+        if (!notification.conditionList || notification.conditionList.length === 0) {
+          console.log(`No conditions defined for notification ${notification.id}, skipping`);
+          continue;
+        }
+
         // Filter conditions that should be checked based on timing
         const conditionsToCheck = notification.conditionList.filter(condition => {
           if (!this.shouldCheckCondition(condition, exchange)) {
@@ -114,7 +120,7 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
         });
 
         // If there are conditions to check, run them in parallel
-        if (conditionsToCheck.length === 0) {
+        if (!conditionsToCheck || conditionsToCheck.length === 0) {
           console.log(`No conditions to check for notification ${notification.id} at this time`);
           continue;
         }
@@ -163,16 +169,16 @@ export default class FinanceNotificationService extends CRUDServiceBase<FinanceN
         }
 
         // Only update firstNotificationSent flags if any conditions were processed
-        const needsUpdate = notification.conditionList.some(condition => !condition.firstNotificationSent);
+        const needsUpdate = notification.conditionList && notification.conditionList.some(condition => !condition.firstNotificationSent);
         
         if (needsUpdate) {
           // Get the latest data to ensure we don't overwrite recent changes
           const latestNotification = await super.getById(notification.id);
           
-          if (latestNotification) {
+          if (latestNotification && latestNotification.conditionList) {
             // Update only the firstNotificationSent flags on the latest data
             latestNotification.conditionList.forEach(latestCondition => {
-              const processedCondition = notification.conditionList.find(c => c.id === latestCondition.id);
+              const processedCondition = notification.conditionList?.find(c => c.id === latestCondition.id);
               if (processedCondition && !processedCondition.firstNotificationSent) {
                 latestCondition.firstNotificationSent = true;
               }
