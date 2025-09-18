@@ -77,7 +77,7 @@ describe('FinanceNotificationService', () => {
   });
 
   describe('Exchange Ticker Uniqueness', () => {
-    it('should prevent creating duplicate Exchange and Ticker combination', async () => {
+    it('should allow creating duplicate Exchange and Ticker combination for different terminals', async () => {
       const notificationData = {
         terminalId: CommonUtil.generateUUID(),
         subscriptionEndpoint: 'http://localhost:3000/endpoint',
@@ -101,10 +101,42 @@ describe('FinanceNotificationService', () => {
       // First creation should succeed
       await service.create(notificationData);
 
-      // Second creation with same exchangeId and tickerId should fail
+      // Second creation with same exchangeId and tickerId but different terminal ID should succeed
       await expect(service.create({
         ...notificationData,
         terminalId: CommonUtil.generateUUID() // Different terminal ID
+      })).resolves.toBeDefined();
+    });
+
+    it('should prevent creating duplicate Exchange and Ticker combination for same terminal', async () => {
+      const terminalId = CommonUtil.generateUUID();
+      const notificationData = {
+        terminalId: terminalId,
+        subscriptionEndpoint: 'http://localhost:3000/endpoint',
+        subscriptionKeysP256dh: 'p256dh',
+        subscriptionKeysAuth: 'auth',
+        exchangeId: ExchangeServiceMock.MockExchangeName,
+        tickerId: TickerServiceMock.MockTickerName,
+        conditionList: [
+          {
+            id: 'test-condition-1',
+            mode: FINANCE_NOTIFICATION_CONDITION_MODE.BUY,
+            conditionName: 'GreaterThan',
+            frequency: FINANCE_NOTIFICATION_FREQUENCY.MINUTE_LEVEL,
+            session: EXCHANGE_SESSION.EXTENDED,
+            targetPrice: 950,
+            firstNotificationSent: false
+          }
+        ]
+      };
+
+      // First creation should succeed
+      await service.create(notificationData);
+
+      // Second creation with same exchangeId, tickerId AND same terminal ID should fail
+      await expect(service.create({
+        ...notificationData,
+        subscriptionEndpoint: 'http://localhost:3000/endpoint2' // Different endpoint but same terminal
       })).rejects.toThrow('指定された Exchange と Ticker の組み合わせは既に登録されています');
     });
 
@@ -187,10 +219,12 @@ describe('FinanceNotificationService', () => {
       })).resolves.toBeDefined();
     });
 
-    it('should prevent updating to duplicate Exchange and Ticker combination', async () => {
-      // Create two different notifications
+    it('should prevent updating to duplicate Exchange and Ticker combination for same terminal', async () => {
+      const terminalId = CommonUtil.generateUUID();
+      
+      // Create two different notifications for the same terminal
       const notification1 = await service.create({
-        terminalId: CommonUtil.generateUUID(),
+        terminalId: terminalId,
         subscriptionEndpoint: 'http://localhost:3000/endpoint1',
         subscriptionKeysP256dh: 'p256dh1',
         subscriptionKeysAuth: 'auth1',
@@ -210,7 +244,7 @@ describe('FinanceNotificationService', () => {
       });
 
       const notification2 = await service.create({
-        terminalId: CommonUtil.generateUUID(),
+        terminalId: terminalId,
         subscriptionEndpoint: 'http://localhost:3000/endpoint2',
         subscriptionKeysP256dh: 'p256dh2',
         subscriptionKeysAuth: 'auth2',
@@ -229,7 +263,7 @@ describe('FinanceNotificationService', () => {
         ]
       });
 
-      // Try to update notification2 to use same exchange/ticker as notification1
+      // Try to update notification2 to use same exchange/ticker as notification1 (same terminal)
       await expect(service.update(notification2.id, {
         exchangeId: ExchangeServiceMock.MockExchangeName,
         tickerId: TickerServiceMock.MockTickerName,
@@ -245,6 +279,69 @@ describe('FinanceNotificationService', () => {
           }
         ]
       })).rejects.toThrow('指定された Exchange と Ticker の組み合わせは既に登録されています');
+    });
+
+    it('should allow updating to duplicate Exchange and Ticker combination for different terminals', async () => {
+      const terminalId1 = CommonUtil.generateUUID();
+      const terminalId2 = CommonUtil.generateUUID();
+      
+      // Create notifications for different terminals
+      const notification1 = await service.create({
+        terminalId: terminalId1,
+        subscriptionEndpoint: 'http://localhost:3000/endpoint1',
+        subscriptionKeysP256dh: 'p256dh1',
+        subscriptionKeysAuth: 'auth1',
+        exchangeId: ExchangeServiceMock.MockExchangeName,
+        tickerId: TickerServiceMock.MockTickerName,
+        conditionList: [
+          {
+            id: 'test-condition-1',
+            mode: FINANCE_NOTIFICATION_CONDITION_MODE.BUY,
+            conditionName: 'GreaterThan',
+            frequency: FINANCE_NOTIFICATION_FREQUENCY.MINUTE_LEVEL,
+            session: EXCHANGE_SESSION.EXTENDED,
+            targetPrice: 950,
+            firstNotificationSent: false
+          }
+        ]
+      });
+
+      const notification2 = await service.create({
+        terminalId: terminalId2,
+        subscriptionEndpoint: 'http://localhost:3000/endpoint2',
+        subscriptionKeysP256dh: 'p256dh2',
+        subscriptionKeysAuth: 'auth2',
+        exchangeId: 'different-exchange-id',
+        tickerId: 'different-ticker-id',
+        conditionList: [
+          {
+            id: 'test-condition-2',
+            mode: FINANCE_NOTIFICATION_CONDITION_MODE.BUY,
+            conditionName: 'GreaterThan',
+            frequency: FINANCE_NOTIFICATION_FREQUENCY.MINUTE_LEVEL,
+            session: EXCHANGE_SESSION.EXTENDED,
+            targetPrice: 950,
+            firstNotificationSent: false
+          }
+        ]
+      });
+
+      // Try to update notification2 to use same exchange/ticker as notification1 (different terminal)
+      await expect(service.update(notification2.id, {
+        exchangeId: ExchangeServiceMock.MockExchangeName,
+        tickerId: TickerServiceMock.MockTickerName,
+        conditionList: [
+          {
+            id: 'test-condition-2',
+            mode: FINANCE_NOTIFICATION_CONDITION_MODE.BUY,
+            conditionName: 'GreaterThan',
+            frequency: FINANCE_NOTIFICATION_FREQUENCY.MINUTE_LEVEL,
+            session: EXCHANGE_SESSION.EXTENDED,
+            targetPrice: 950,
+            firstNotificationSent: false
+          }
+        ]
+      })).resolves.toBeDefined();
     });
   });
 });
