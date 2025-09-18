@@ -93,6 +93,7 @@ export default function FinanceNotificationConditionEditDialogContent({
 
     useEffect(() => {
         if (!item.conditionName) return;
+        if (conditionInfo.name !== item.conditionName) return;
 
         console.log('conditionInfo effect triggered:', {
             'conditionInfo.enableTargetPrice': conditionInfo.enableTargetPrice,
