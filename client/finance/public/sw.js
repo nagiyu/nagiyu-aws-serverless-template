@@ -7,6 +7,7 @@ self.addEventListener('push', function (event) {
       icon: data.icon || '/logo.png',
       badge: '/logo.png',
       vibrate: [100, 50, 100],
+      data: data.data // Include the data field from the payload
     };
 
     event.waitUntil(
