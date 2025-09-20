@@ -1,5 +1,5 @@
 import AuthDataAccessor from '@common/services/auth/AuthDataAccessor';
-import CRUDServiceBase from '@common/services/CRUDServiceBase.old';
+import CRUDServiceBase from '@common/services/CRUDServiceBase';
 import { AuthDataType } from '@common/interfaces/data/AuthDataType';
 import { AuthRecordType } from '@common/interfaces/record/AuthRecordType';
 
