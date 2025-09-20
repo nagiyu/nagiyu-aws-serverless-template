@@ -1,6 +1,14 @@
 import { NextRequest } from "next/server";
 
-import NotificationUtil, { NotificationPayloadType } from '@client-common/utils/NotificationUtil.server';
+import NotificationUtil, { PayloadType } from '@client-common/utils/NotificationUtil.server';
+
+// Finance-specific notification payload type that extends the base PayloadType
+export interface NotificationPayloadType extends PayloadType {
+  data?: {
+    exchangeId?: string;
+    tickerId?: string;
+  };
+}
 
 export async function POST(request: NextRequest) {
   const { message, subscription } = await request.json();
