@@ -16,12 +16,9 @@ export default function LoadingContent({
 
     async function runWithLoading<T>(func: () => Promise<T>): Promise<T> {
         setLoading(true);
-        try {
-            const result = await func();
-            return result;
-        } finally {
-            setLoading(false);
-        }
+        const result = await func();
+        setLoading(false);
+        return result;
     }
 
     return children(loading, runWithLoading);

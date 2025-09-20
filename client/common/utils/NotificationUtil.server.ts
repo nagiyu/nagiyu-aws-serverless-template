@@ -5,15 +5,14 @@ import SecretsManagerUtil from '@common/aws/SecretsManagerUtil';
 
 import APIUtil from '@client-common/utils/APIUtil';
 
-export interface PayloadType {
+export interface NotificationPayloadType {
   title: string;
   body: string;
   icon?: string;
-  data?: Record<string, any>;
 }
 
 export default class NotificationUtil {
-  public static async sendNotification(subscription: any, payload: PayloadType): Promise<NextResponse> {
+  public static async sendNotification(subscription: any, payload: NotificationPayloadType): Promise<NextResponse> {
     try {
       if (!subscription) {
         return APIUtil.ReturnBadRequest('No subscription provided');
