@@ -29,6 +29,7 @@ describe('FinanceNotificationService', () => {
 
   beforeEach(() => {
     dataAccessor = new FinanceNotificationDataAccessorMock();
+    notificationService.clearMessages();
     service = new FinanceNotificationService(
       dataAccessor,
       new ExchangeServiceMock(),
