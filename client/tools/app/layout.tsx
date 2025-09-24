@@ -34,8 +34,7 @@ export default function RootLayout({
     <CommonLayout
       title='Tools'
       menuItems={menuItems}
-      enableAuthentication={false}
-      enableAdSense={false}
+      enableAdSense={true}
     >
       {children}
     </CommonLayout>
