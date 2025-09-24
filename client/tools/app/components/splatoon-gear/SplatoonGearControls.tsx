@@ -37,7 +37,7 @@ export default function SplatoonGearControls({
       <Chip 
         label={`残りギアパワー: ${remainingPower}`}
         color={getChipColor()}
-        size="large"
+        size="medium"
       />
       
       <ContainedButton

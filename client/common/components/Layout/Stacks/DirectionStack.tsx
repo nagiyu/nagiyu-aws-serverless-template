@@ -4,7 +4,7 @@ import { Stack } from '@mui/material';
 
 type DirectionStackProps = {
     spacing?: number;
-    justifyContent?: 'flex-start' | 'center' | 'flex-end';
+    justifyContent?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly';
     alignItems?: 'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline';
     children: React.ReactNode;
 };
