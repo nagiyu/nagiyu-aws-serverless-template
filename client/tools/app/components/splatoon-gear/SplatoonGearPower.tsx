@@ -54,73 +54,75 @@ export default function SplatoonGearPower({
             />
           </div>
 
-          <DirectionStack spacing={1}>
-            <IconButton 
-              onClick={() => handleValueChange(-10)}
-              disabled={gearPower.value < 10}
-              color="secondary"
-            >
-              <Remove />
-            </IconButton>
-            <ContainedButton
-              label="-10"
-              onClick={() => handleValueChange(-10)}
-              disabled={gearPower.value < 10}
-            />
-            
-            <IconButton 
-              onClick={() => handleValueChange(-3)}
-              disabled={gearPower.value < 3}
-              color="secondary"
-            >
-              <Remove />
-            </IconButton>
-            <ContainedButton
-              label="-3"
-              onClick={() => handleValueChange(-3)}
-              disabled={gearPower.value < 3}
-            />
-
-            <div style={{ width: 80 }}>
-              <BasicNumberField
-                value={gearPower.value}
-                readonly={true}
+          <div style={{ overflowX: 'auto', minWidth: 0 }}>
+            <DirectionStack spacing={1} style={{ minWidth: 'fit-content' }}>
+              <IconButton 
+                onClick={() => handleValueChange(-10)}
+                disabled={gearPower.value < 10}
+                color="secondary"
+              >
+                <Remove />
+              </IconButton>
+              <ContainedButton
+                label="-10"
+                onClick={() => handleValueChange(-10)}
+                disabled={gearPower.value < 10}
               />
-            </div>
+              
+              <IconButton 
+                onClick={() => handleValueChange(-3)}
+                disabled={gearPower.value < 3}
+                color="secondary"
+              >
+                <Remove />
+              </IconButton>
+              <ContainedButton
+                label="-3"
+                onClick={() => handleValueChange(-3)}
+                disabled={gearPower.value < 3}
+              />
 
-            <ContainedButton
-              label="+3"
-              onClick={() => handleValueChange(3)}
-              disabled={remainingPower < 3}
-            />
-            <IconButton 
-              onClick={() => handleValueChange(3)}
-              disabled={remainingPower < 3}
-              color="primary"
-            >
-              <Add />
-            </IconButton>
+              <div style={{ width: 80 }}>
+                <BasicNumberField
+                  value={gearPower.value}
+                  readonly={true}
+                />
+              </div>
 
-            <ContainedButton
-              label="+10"
-              onClick={() => handleValueChange(10)}
-              disabled={remainingPower < 10}
-            />
-            <IconButton 
-              onClick={() => handleValueChange(10)}
-              disabled={remainingPower < 10}
-              color="primary"
-            >
-              <Add />
-            </IconButton>
+              <ContainedButton
+                label="+3"
+                onClick={() => handleValueChange(3)}
+                disabled={remainingPower < 3}
+              />
+              <IconButton 
+                onClick={() => handleValueChange(3)}
+                disabled={remainingPower < 3}
+                color="primary"
+              >
+                <Add />
+              </IconButton>
 
-            <IconButton 
-              onClick={() => onRemove(gearPower.id)}
-              color="error"
-            >
-              <Delete />
-            </IconButton>
-          </DirectionStack>
+              <ContainedButton
+                label="+10"
+                onClick={() => handleValueChange(10)}
+                disabled={remainingPower < 10}
+              />
+              <IconButton 
+                onClick={() => handleValueChange(10)}
+                disabled={remainingPower < 10}
+                color="primary"
+              >
+                <Add />
+              </IconButton>
+
+              <IconButton 
+                onClick={() => onRemove(gearPower.id)}
+                color="error"
+              >
+                <Delete />
+              </IconButton>
+            </DirectionStack>
+          </div>
         </DirectionStack>
       </CardContent>
     </Card>

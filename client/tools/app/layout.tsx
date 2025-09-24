@@ -20,7 +20,7 @@ const menuItems: MenuItemData[] = [
     url: '/convert-transfer'
   },
   {
-    title: 'Splatoon Gear',
+    title: 'Splatoon3 Gear',
     url: '/splatoon-gear'
   }
 ];
@@ -34,7 +34,8 @@ export default function RootLayout({
     <CommonLayout
       title='Tools'
       menuItems={menuItems}
-      enableAdSense={true}
+      enableAuthentication={false}
+      enableAdSense={false}
     >
       {children}
     </CommonLayout>

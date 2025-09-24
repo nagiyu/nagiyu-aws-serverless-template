@@ -8,7 +8,7 @@ import { SelectOptionType } from '@client-common/interfaces/SelectOptionType';
 import SplatoonGearControls from './SplatoonGearControls';
 import SplatoonGearPower from './SplatoonGearPower';
 
-// Splatoon gear powers (common ones)
+// Splatoon3 gear powers (common ones)
 const GEAR_POWERS = [
   'インク効率アップ(メイン)',
   'インク効率アップ(サブ)', 
@@ -90,7 +90,7 @@ export default function SplatoonGearTool() {
   return (
     <Box sx={{ maxWidth: 800, margin: '0 auto', padding: 2 }}>
       <Typography variant="h4" gutterBottom align="center">
-        Splatoon ギア検討ツール
+        Splatoon3 ギア検討ツール
       </Typography>
       
       <Typography variant="body1" gutterBottom align="center" color="text.secondary">

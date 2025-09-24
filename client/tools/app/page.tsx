@@ -14,7 +14,7 @@ export default function Home() {
       url: '/convert-transfer',
     },
     {
-      label: 'Splatoon Gear',
+      label: 'Splatoon3 Gear',
       icon: <SportsEsports />,
       url: '/splatoon-gear',
     },
