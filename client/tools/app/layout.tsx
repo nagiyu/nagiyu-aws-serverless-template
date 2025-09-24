@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 
-import CommonLayout from '@client-common/components/layout/CommonLayout';
 import { MenuItemData } from '@client-common/components/navigations/Menus/LinkMenu';
 
 import "./globals.css";
@@ -18,6 +17,10 @@ const menuItems: MenuItemData[] = [
   {
     title: 'Convert Transfer',
     url: '/convert-transfer'
+  },
+  {
+    title: 'Splatoon Gear',
+    url: '/splatoon-gear'
   }
 ];
 
@@ -27,12 +30,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <CommonLayout
-      title='Tools'
-      menuItems={menuItems}
-      enableAdSense={true}
-    >
-      {children}
-    </CommonLayout>
+    <html lang="ja">
+      <body>
+        <div style={{ padding: '10px' }}>
+          <nav style={{ marginBottom: '20px' }}>
+            <a href="/" style={{ marginRight: '10px' }}>Home</a>
+            <a href="/convert-transfer" style={{ marginRight: '10px' }}>Convert Transfer</a>
+            <a href="/splatoon-gear" style={{ marginRight: '10px' }}>Splatoon Gear</a>
+          </nav>
+          {children}
+        </div>
+      </body>
+    </html>
   );
 }
