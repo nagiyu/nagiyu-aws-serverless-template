@@ -1,4 +1,4 @@
-// Development version - disabled AdSense for local development
+import SecretsManagerUtil from '@common/aws/SecretsManagerUtil';
 import EnvironmentalUtil from '@common/utils/EnvironmentalUtil';
 
 export interface AdsenseConfig {
@@ -19,8 +19,15 @@ export default class AdSenseUtil {
       return null;
     }
 
-    // For development, return null to avoid AWS SDK dependency
-    console.warn('AdSense disabled in development environment');
-    return null;
+    try {
+      const publisherId = await SecretsManagerUtil.getSecretValue('GoogleAdSense', 'PUBLISHER_ID', true);
+      
+      return {
+        publisherId
+      };
+    } catch (error) {
+      console.warn('AdSense Publisher ID not available:', error);
+      return null;
+    }
   }
 }
